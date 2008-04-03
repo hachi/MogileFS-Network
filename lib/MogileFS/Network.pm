@@ -6,6 +6,8 @@ use warnings;
 use Net::Netmask;
 use MogileFS::Config;
 
+our $VERSION = "0.00_01";
+
 my %cache; # '192.168.0.0/24' => Net::Netmask->new2('192.168.0.0/24');
 my $age;   # increments everytime we look
 
