@@ -9,7 +9,7 @@ use Net::Netmask;
 use MogileFS::Server;
 use MogileFS::Util qw(error_code);
 use MogileFS::ReplicationPolicy::MultipleNetworks;
-require "$Bin/lib/mogtestlib.pl";
+use MogileFS::Test;
 
 plan tests => 25;
 
