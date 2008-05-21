@@ -8,6 +8,8 @@ WriteMakefile(
     AUTHOR                  => 'Jonathan Steinert <hachi@cpan.org>',
     ABSTRACT                => 'MogileFS Server class for representing networks based on host IPs.',
     PREREQ_PM               => {
+        'Net::Netmask' => 0,
+        'Net::Patricia' => 0,
     },
 );
 
