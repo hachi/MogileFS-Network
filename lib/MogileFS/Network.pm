@@ -31,24 +31,19 @@ sub check_cache {
 
     $trie = Net::Patricia->new();
 
-    my @zones = split(/\s*,\s*/,MogileFS::Config->server_setting("network_zones"));
+    my @zones = split(/\s*,\s*/, get_setting("network_zones"));
 
     my @netmasks; # [ $bits, $netmask, $zone ], ...
 
     foreach my $zone (@zones) {
-        my $zone_masks = MogileFS::Config->server_setting("zone_$zone");
+        my $zone_masks = get_setting("zone_$zone");
+
+        if (not $zone_masks) {
+            warn "couldn't find network_zone <<zone_$zone>> check your server settings";
+            next;
+        }
 
         foreach my $network_string (split /[,\s]+/, $zone_masks) {
-            if (not $network_string) {
-                warn "couldn't find network_zone <<zone_$zone>> check your server settings";
-                next;
-            }
-
-            #if ($cache{$zone}) {
-            #    warn "duplicate netmask <$netmask> in network zones. check your server settings";
-            #}
-
-            #$cache{$zone} = Net::Netmask->new2($netmask);
             my $netmask = Net::Netmask->new2($network_string);
 
             if (Net::Netmask::errstr()) {
@@ -61,27 +56,44 @@ sub check_cache {
         }
     }
 
+    # Sort these by mask bit count, because Net::Patricia doesn't say in its docs whether add order
+    # or bit length is the overriding factor.
     foreach my $set (sort { $a->[0] <=> $b->[0] } @netmasks) {
         my ($bits, $netmask, $zone) = @$set;
+
+        if (my $other_zone = $trie->match_exact_string("$netmask")) {
+            warn "duplicate netmask <$netmask> in network zones '$zone' and '$other_zone'. check your server settings";
+        }
 
         $trie->add_string("$netmask", $zone);
     }
 
-    my $interval = MogileFS::Config->server_setting("network_reload_interval")
-                   || DEFAULT_RELOAD_INTERVAL;
-
-    clear_and_build_cache();
+    my $interval = get_setting("network_reload_interval") || DEFAULT_RELOAD_INTERVAL;
 
     $next_reload = time() + $interval;
 
     return 1;
 }
 
-sub stuff_cache { # for testing, or it'll try the db
-    my ($self, $zone, $netmask) = @_;
+# This is a seperate subroutine so I can redefine it at test time.
+sub get_setting {
+    my $key = shift;
+    return MogileFS::Config->server_setting($key);
+}
 
-    $trie->add_string("$netmask", $zone);
-    $next_reload = time() + 120; # If the test takes more than two minutes we're gonna break
+sub test_config {
+    my $class = shift;
+
+    my %config = @_;
+
+    no warnings 'redefine';
+
+    *get_setting = sub {
+        my $key = shift;
+        return $config{$key};
+    };
+
+    $next_reload = 0;
 }
 
 1;

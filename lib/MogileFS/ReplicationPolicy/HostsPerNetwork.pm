@@ -1,6 +1,8 @@
 package MogileFS::ReplicationPolicy::HostsPerNetwork;
 
 use strict;
+use warnings;
+
 use base 'MogileFS::ReplicationPolicy';
 
 use MogileFS::Network;

@@ -113,9 +113,13 @@ sub rr {
 
     my $polclass = "MogileFS::ReplicationPolicy::HostsPerNetwork";
 
-    my $pol = $polclass->new(hosts_per_zone => { zone_one => $min });
+    my $pol = $polclass->new(hosts_per_zone => { one => $min });
 
-    MogileFS::Network->stuff_cache(zone_one => Net::Netmask->new('127.0.0.0/16'));
+    MogileFS::Network->test_config(
+        zone_one      => '127.0.0.0/16',
+        network_zones => 'one',
+    );
+
     my $rr = $pol->replicate_to(
                                 fid      => 1,
                                 on_devs  => $on_devs,
