@@ -123,7 +123,7 @@ sub replicate_to {
     return TEMP_NO_ANSWER unless @all_dests;
 
     my @ideal         = grep { ! $skip_host{$_->hostid} } @all_dests;
-    # wrong network is less desparate than wrong host
+    # wrong network is less desperate than wrong host
     my @network_desp  = grep {   $skip_host{$_->hostid} &&
                                  $skip_host{$_->hostid} eq AVOIDNETWORK } @all_dests;
     my @host_desp     = grep {   $skip_host{$_->hostid} &&
@@ -160,7 +160,7 @@ sub unique_hosts_and_networks {
 
 {
     my %cache; # '192.168.0.0/24' => Net::Netmask->new2('192.168.0.0/24');
-    my $age;   # increments everytime we look
+    my $age;   # increments every time we look
 
     # turn a server ip into a network
     # defaults to /16 ranges

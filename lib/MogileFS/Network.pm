@@ -75,7 +75,7 @@ sub check_cache {
     return 1;
 }
 
-# This is a seperate subroutine so I can redefine it at test time.
+# This is a separate subroutine so I can redefine it at test time.
 sub get_setting {
     my $key = shift;
     return MogileFS::Config->server_setting($key);

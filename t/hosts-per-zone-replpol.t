@@ -20,7 +20,7 @@ is(rr("min=2  h1[d1=X d2=_] h2[d3=X d4=_]"),
 is(rr("min=2  h1[d1=X d2=_] h2[d3=_ d4=_]"),
    "ideal(3,4)", "need host2");
 
-# still needs to be on host2, even though 2 coies on host1
+# still needs to be on host2, even though 2 copies on host1
 is(rr("min=2  h1[d1=X d2=X] h2[d3=_ d4=_]"),
    "ideal(3,4)", "need host2, even though 2 on host1");
 
@@ -41,7 +41,7 @@ is(rr("min=2  h1[d1=_ d2=X,dead] h2=alive[d3=X d4=_]"),
    "ideal(1)");
 
 # minimum hosts is 3, only 2 available hosts. This test differs from
-# the one in multiplehosts because elavating these results to be 'ideal'
+# the one in multiplehosts because elevating these results to be 'ideal'
 # adds complexity that is unnecessary in my eyes.
 is(rr("min=3 h1[d1=_ d2=X] h2[d3=X d4=_]"),
    "desperate(1,4)");
