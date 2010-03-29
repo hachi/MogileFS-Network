@@ -112,8 +112,8 @@ sub replicate_to {
         return ALL_GOOD;
     }
 
-    my @all_dests = weighted_list map {
-        [$_, 100 * $_->percent_free]
+    my @all_dests = sort {
+        $b->percent_free <=> $a->percent_free
     } grep {
         ! $on_dev{$_->devid} &&
         ! $failed->{$_->devid} &&
@@ -142,6 +142,11 @@ sub replicate_to {
     }
 
     return TEMP_NO_ANSWER unless @desp or @ideal;
+
+    @ideal = weighted_list(map { [$_, 100 * $_->percent_free] }
+        splice(@ideal, 0, 20));
+    @desp  = weighted_list(map { [$_, 100 * $_->percent_free] }
+        splice(@desp, 0, 20));
 
     return MogileFS::ReplicationRequest->new(
                                              ideal     => \@ideal,

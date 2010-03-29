@@ -112,8 +112,8 @@ sub replicate_to {
         }
     }
 
-    my @all_dests = weighted_list map {
-        [$_, 100 * $_->percent_free]
+    my @all_dests = sort {
+        $b->percent_free <=> $a->percent_free
     } grep {
         ! $on_dev{$_->devid} &&
         ! $failed->{$_->devid} &&
@@ -128,6 +128,13 @@ sub replicate_to {
                                  $skip_host{$_->hostid} eq AVOIDNETWORK } @all_dests;
     my @host_desp     = grep {   $skip_host{$_->hostid} &&
                                  $skip_host{$_->hostid} ne AVOIDNETWORK } @all_dests;
+
+    @ideal        = weighted_list(map { [$_, 100 * $_->percent_free] }
+        splice(@ideal, 0, 20));
+    @network_desp = weighted_list(map { [$_, 100 * $_->percent_free] }
+        splice(@network_desp, 0, 20));
+    @host_desp    = weighted_list(map { [$_, 100 * $_->percent_free] }
+        splice(@host_desp, 0, 20));
 
     my @desp = (@network_desp, @host_desp);
 
