@@ -5,9 +5,6 @@ package MogileFS::Plugin::ZoneLocal;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
-$VERSION = eval $VERSION;
-
 use MogileFS::Worker::Query;
 use MogileFS::Network;
 use MogileFS::Util qw/error/;
